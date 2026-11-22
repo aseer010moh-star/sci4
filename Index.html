@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلسلة الأمين في الفيزياء 2027 - اختبار 4 المحاليل المائية</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background: #0b132b; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; }
+        .container { width: 100%; max-width: 750px; background: #1c2541; border-radius: 16px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); border: 1px solid #3a506b; transition: filter 0.25s ease; }
+        .container.blurred { filter: blur(10px); pointer-events: none; user-select: none; }
+        .header-title { text-align: center; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 12px; border-radius: 12px; font-size: 1.15rem; font-weight: bold; margin-bottom: 15px; }
+
+        #login-section { display: flex; flex-direction: column; gap: 12px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; text-align: right; }
+        .form-group label { font-size: 0.9rem; color: #34d399; font-weight: bold; }
+        .form-control { background: #0b132b; border: 1px solid #3a506b; border-radius: 8px; padding: 12px; color: #fff; font-size: 1rem; outline: none; width: 100%; }
+        .btn-main { background: #10b981; color: #0b132b; padding: 14px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; text-align: center; transition: background 0.2s; margin-top: 5px; width: 100%; }
+        .btn-main:hover { background: #059669; color: #fff; }
+        .login-error { color: #ef4444; font-size: 0.85rem; text-align: center; display: none; font-weight: bold; }
+
+        .footer-text { text-align: center; font-size: 0.78rem; color: #94a3b8; margin-top: 16px; border-top: 1px solid #3a506b; padding-top: 10px; line-height: 1.5; }
+
+        #exam-section { display: none; }
+        .status-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #0b132b; padding: 8px 12px; border-radius: 8px; border: 1px solid #3a506b; }
+        .timer-badge { background: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+        .user-badge { color: #34d399; font-weight: bold; font-size: 0.85rem; }
+
+        .question-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-bottom: 12px; background: #0b132b; padding: 8px; border-radius: 8px; border: 1px solid #3a506b; max-height: 120px; overflow-y: auto; }
+        .grid-btn { background: #3a506b; color: #cbd5e1; border: none; border-radius: 4px; padding: 6px 0; font-size: 0.75rem; cursor: pointer; text-align: center; font-weight: bold; }
+        .grid-btn.active { background: #10b981; color: #0b132b; }
+        .grid-btn.answered { border: 1px solid #10b981; color: #34d399; }
+
+        .tools-bar { display: flex; gap: 8px; margin-bottom: 12px; }
+        .tool-btn { flex: 1; background: #3a506b; color: #f8fafc; border: none; padding: 9px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; text-align: center; }
+
+        .question-card { background: #0b132b; border-radius: 10px; padding: 15px; border: 1px solid #3a506b; margin-bottom: 12px; }
+        .question-header { display: flex; justify-content: space-between; color: #34d399; font-size: 0.85rem; margin-bottom: 8px; font-weight: bold; }
+        .question-text { font-size: 0.98rem; line-height: 1.65; color: #f8fafc; margin-bottom: 12px; font-weight: 500; text-align: right; }
+
+        .diagram-box { background: #111827; border: 1px solid #3a506b; border-radius: 10px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: center; align-items: center; overflow-x: auto; }
+        .diagram-table { width: 100%; border-collapse: collapse; }
+        .diagram-table th, .diagram-table td { border: 1px solid #374151; padding: 7px; text-align: center; font-size: 0.85rem; color: #f3f4f6; }
+        .diagram-table th { background: #1f2937; color: #34d399; }
+
+        .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .option-item { background: #1c2541; border: 1px solid #3a506b; border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: #e2e8f0; font-size: 0.9rem; text-align: right; }
+        .option-item.selected { border-color: #10b981; background: rgba(16, 185, 129, 0.25); color: white; font-weight: bold; }
+        .option-item.eliminated { opacity: 0.2; text-decoration: line-through; pointer-events: none; }
+
+        .action-buttons { display: flex; flex-direction: row-reverse; justify-content: space-between; gap: 10px; }
+        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .btn-prev, .btn-next { background: #3a506b; color: white; flex: 1; }
+        .btn-submit { background: #10b981; color: #0b132b; flex: 1.2; }
+
+        #result-section { display: none; text-align: center; }
+        .result-title { font-size: 1.2rem; color: #34d399; margin-bottom: 10px; font-weight: bold; }
+        .lock-box { background: #0b132b; padding: 15px; border-radius: 10px; border: 1px solid #3a506b; margin-top: 15px; text-align: center; }
+        .pin-input { background: #1c2541; border: 1px solid #3a506b; color: white; padding: 8px; font-size: 1.1rem; text-align: center; border-radius: 6px; width: 180px; letter-spacing: 3px; margin-bottom: 10px; outline: none; }
+        .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 5px; display: none; font-weight: bold; }
+        .report-content { display: none; text-align: right; margin-top: 15px; background: #0b132b; padding: 12px; border-radius: 8px; border: 1px solid #10b981; max-height: 280px; overflow-y: auto; }
+        .report-item { padding: 8px 0; border-bottom: 1px solid #3a506b; font-size: 0.85rem; line-height: 1.5; }
+
+        .warning-banner { display: none; position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #991b1b; color: #fff; border: 1px solid #f87171; padding: 10px 18px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; z-index: 2000; box-shadow: 0 10px 25px rgba(0,0,0,0.6); text-align: center; width: 92%; max-width: 520px; }
+    </style>
+</head>
+<body>
+
+    <div id="warning-banner" class="warning-banner"></div>
+
+    <div class="container" id="main-container">
+        <div class="header-title">
+            سلسلة الأمين في الفيزياء 2027<br>
+            <span style="font-size: 0.82rem; color: #94a3b8;">اختبار 4 المحاليل المائية — أولى ثانوي علوم متكاملة</span>
+        </div>
+
+        <div id="login-section">
+            <div class="form-group">
+                <label>اسم الطالب:</label>
+                <input type="text" id="student-name" class="form-control" placeholder="اكتب اسمك ثلاثياً...">
+            </div>
+            <div class="form-group">
+                <label>الكود:</label>
+                <input type="password" id="student-code" class="form-control" placeholder="••••">
+            </div>
+            <div id="login-error" class="login-error">الكود غير صحيح أو تم استخدامه مسبقاً على هذا الجهاز.</div>
+            <button type="button" class="btn-main" id="start-btn" onclick="verifyAndStart()">دخول الاختبار</button>
+
+            <div class="footer-text">
+                جميع الحقوق محفوظة أ/محمد أمين نظير 2027
+            </div>
+        </div>
+
+        <div id="exam-section">
+            <div class="status-panel">
+                <div class="timer-badge" id="timer-display">40:00</div>
+                <div class="user-badge" id="display-name">الطالب</div>
+            </div>
+
+            <div class="question-grid" id="question-grid"></div>
+
+            <div class="tools-bar">
+                <button type="button" class="tool-btn" id="eliminate-btn" onclick="eliminateTwoOptions()">حذف إجابتين (مرة واحدة)</button>
+                <button type="button" class="tool-btn" id="hint-btn" onclick="showHint()">تلميح (<span id="hint-count">2</span> متبقي)</button>
+            </div>
+
+            <div class="question-card">
+                <div class="question-header">
+                    <span id="question-number-lbl">السؤال 1 من 30</span>
+                    <span>الدرجة: <span id="question-score-lbl">1 درجة</span></span>
+                </div>
+                <div class="question-text" id="question-text"></div>
+                <div id="diagram-container"></div>
+                <div class="options-list" id="options-container"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-submit" id="submit-exam-btn" onclick="confirmAndSubmit()">تسليم الاختبار</button>
+                <button type="button" class="btn btn-next" id="next-btn" onclick="nextQuestion()">التالي</button>
+                <button type="button" class="btn btn-prev" id="prev-btn" onclick="prevQuestion()">السابق</button>
+            </div>
+
+            <div class="footer-text">
+                جميع الحقوق محفوظة أ/محمد أمين نظير 2027
+            </div>
+        </div>
+
+        <div id="result-section">
+            <div class="result-title">تم تسليم الاختبار</div>
+            <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 12px;">تم إرسال التقرير إلى البريد الإلكتروني.</p>
+
+            <div class="lock-box">
+                <p style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 8px;">أدخل الكود لفتح النتيجة والتقرير:</p>
+                <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="10">
+                <div>
+                    <button type="button" class="btn" id="verify-pin-btn" onclick="verifyPin()" style="background: #10b981; color: #0b132b; padding: 8px 18px; font-size: 0.9rem;">فتح النتيجة</button>
+                </div>
+                <div id="error-msg" class="error-msg">الكود غير صحيح.</div>
+            </div>
+
+            <div id="report-content" class="report-content">
+                <div id="report-items-container"></div>
+            </div>
+
+            <div class="footer-text">
+                جميع الحقوق محفوظة أ/محمد أمين نظير 2027
+            </div>
+        </div>
+    </div>
+
+    <form id="resultForm" action="https://formsubmit.co/aseer010moh@gmail.com" method="POST" style="display:none;">
+        <input type="hidden" name="_subject" id="formSubject" value="تقرير اختبار 4 المحاليل المائية">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <textarea name="التقرير" id="formMessage"></textarea>
+    </form>
+
+    <script>
+        const svgSolutionSurface = `
+        <svg width="320" height="125" viewBox="0 0 320 125" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="25" width="110" height="80" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
+            <rect x="22" y="55" width="106" height="48" fill="#0284c7" opacity="0.45"/>
+            <line x1="22" y1="55" x2="128" y2="55" stroke="#38bdf8" stroke-width="2"/>
+            <circle cx="40" cy="55" r="4" fill="#38bdf8"/>
+            <circle cx="60" cy="55" r="4" fill="#f59e0b"/>
+            <circle cx="80" cy="55" r="4" fill="#38bdf8"/>
+            <circle cx="100" cy="55" r="4" fill="#f59e0b"/>
+            <circle cx="115" cy="55" r="4" fill="#38bdf8"/>
+            <text x="75" y="16" fill="#34d399" font-size="11" text-anchor="middle" font-family="Segoe UI">محلول مائي</text>
+            <text x="75" y="119" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="Segoe UI">أزرق: ماء | برتقالي: مذاب</text>
+
+            <rect x="190" y="25" width="110" height="80" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
+            <rect x="192" y="55" width="106" height="48" fill="#0284c7" opacity="0.45"/>
+            <line x1="192" y1="55" x2="298" y2="55" stroke="#38bdf8" stroke-width="2"/>
+            <circle cx="212" cy="55" r="4" fill="#38bdf8"/>
+            <circle cx="235" cy="55" r="4" fill="#38bdf8"/>
+            <circle cx="258" cy="55" r="4" fill="#38bdf8"/>
+            <circle cx="280" cy="55" r="4" fill="#38bdf8"/>
+            <text x="245" y="16" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="Segoe UI">ماء نقي</text>
+            <text x="245" y="119" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="Segoe UI">سطح ماء فقط</text>
+        </svg>`;
+
+        const svgVaporPressureCurve = `
+        <svg width="290" height="145" viewBox="0 0 290 145" xmlns="http://www.w3.org/2000/svg">
+            <line x1="55" y1="115" x2="265" y2="115" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="55" y1="115" x2="55" y2="20" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="65" y1="32" x2="245" y2="105" stroke="#10b981" stroke-width="2.5"/>
+            <text x="160" y="135" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="Segoe UI">عدد جسيمات المادة المذابة (T ثابتة)</text>
+            <text x="48" y="25" fill="#34d399" font-size="10" text-anchor="end" font-family="Segoe UI">الضغط البخاري</text>
+            <text x="48" y="38" fill="#34d399" font-size="10" text-anchor="end" font-family="Segoe UI">للمحلول</text>
+        </svg>`;
+
+        const svgAltitudeBoilingCurve = `
+        <svg width="290" height="145" viewBox="0 0 290 145" xmlns="http://www.w3.org/2000/svg">
+            <line x1="60" y1="115" x2="265" y2="115" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="60" y1="115" x2="60" y2="20" stroke="#94a3b8" stroke-width="2"/>
+            <path d="M 65 28 Q 145 45 245 98" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+            <text x="162" y="135" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="Segoe UI">الارتفاع عن مستوى سطح البحر (متر)</text>
+            <text x="54" y="28" fill="#34d399" font-size="10" text-anchor="end" font-family="Segoe UI">100°C</text>
+            <text x="54" y="72" fill="#34d399" font-size="10" text-anchor="end" font-family="Segoe UI">درجة الغليان</text>
+        </svg>`;
+
+        const svgOsmosisDiagram = `
+        <svg width="320" height="130" viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="22" width="115" height="82" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
+            <rect x="22" y="45" width="111" height="57" fill="#38bdf8" opacity="0.25"/>
+            <text x="77" y="15" fill="#38bdf8" font-size="10.5" text-anchor="middle" font-family="Segoe UI">محلول مخفف (تركيز أقل)</text>
+            <text x="77" y="76" fill="#e2e8f0" font-size="10" text-anchor="middle" font-family="Segoe UI">نسبة أعلى لجزيئات الماء</text>
+
+            <line x1="160" y1="18" x2="160" y2="110" stroke="#fbbf24" stroke-width="3" stroke-dasharray="5,4"/>
+            <text x="160" y="123" fill="#fbbf24" font-size="10" text-anchor="middle" font-family="Segoe UI">غشاء شبه منفذ</text>
+            <path d="M 138 72 L 182 72" stroke="#10b981" stroke-width="2"/>
+            <polygon points="182,72 175,68 175,76" fill="#10b981"/>
+
+            <rect x="185" y="22" width="115" height="82" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
+            <rect x="187" y="45" width="111" height="57" fill="#f59e0b" opacity="0.25"/>
+            <text x="242" y="15" fill="#fbbf24" font-size="10.5" text-anchor="middle" font-family="Segoe UI">محلول مركز (تركيز أعلى)</text>
+            <text x="242" y="76" fill="#e2e8f0" font-size="10" text-anchor="middle" font-family="Segoe UI">ضغط أسموزي مرتفع</text>
+        </svg>`;
+
+        const svgOsmoticConcentrationCurve = `
+        <svg width="290" height="145" viewBox="0 0 290 145" xmlns="http://www.w3.org/2000/svg">
+            <line x1="60" y1="115" x2="265" y2="115" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="60" y1="115" x2="60" y2="20" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="65" y1="110" x2="245" y2="30" stroke="#f59e0b" stroke-width="2.5"/>
+            <text x="162" y="135" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="Segoe UI">تركيز المواد المذابة في المحلول</text>
+            <text x="54" y="28" fill="#fbbf24" font-size="10" text-anchor="end" font-family="Segoe UI">الضغط</text>
+            <text x="54" y="40" fill="#fbbf24" font-size="10" text-anchor="end" font-family="Segoe UI">الأسموزي</text>
+        </svg>`;
+
+        const tableSaltEffect = `
+        <table class="diagram-table">
+            <tr><th>الخاصية</th><th>الماء النقي</th><th>محلول مائي مالح (NaCl)</th></tr>
+            <tr><td>الضغط البخاري (25°C)</td><td>23.76 mmHg</td><td>أقل من 23.76 mmHg</td></tr>
+            <tr><td>درجة الغليان (1 atm)</td><td>100°C</td><td>أعلى من 100°C</td></tr>
+            <tr><td>درجة التجمد (1 atm)</td><td>0°C</td><td>أقل من 0°C</td></tr>
+            <tr><td>الضغط الأسموزي</td><td>صفر</td><td>أكبر من الصفر</td></tr>
+        </table>`;
+
+        const questionsData = [
+            {
+                q: "1. في البيئات المائية، يُعد الماء المذيب الرئيسي بينما يمكن أن يكون المذاب مادة كهرمانية أو غيرها مثل الأملاح[span_0](start_span)[span_0](end_span). أي النتيجتين المباشرتين تترتبان على تغير المواد الذائبة في مياه المسطحات المائية؟",
+                options: [
+                    "أ) تغيرات في التيارات المائية وتنوع الكائنات الحية المائية[span_1](start_span)[span_1](end_span)",
+                    "ب) انعدام التبخر وثبات ملوحة جميع البحار والمحيطات",
+                    "ج) تحول الماء النقي إلى مادة غير متجانسة تلقائياً",
+                    "د) توقف عملية التكثف في الأنظمة المغلقة"
+                ],
+                correct: 0, score: 1, hint: "راجع الجزء العلوي من صفحة المحاليل المائية في الدرس الرابع[span_2](start_span)[span_2](end_span)."
+            },
+            {
+                q: "2. بالاعتماد على الشكل المقابل الذي يقارن بين سطح محلول مائي وسطح ماء نقي، ما السبب في انخفاض الضغط البخاري للمحلول؟",
+                diagram: `<div class="diagram-box">${svgSolutionSurface}</div>`,
+                options: [
+                    "أ) احتلال جسيمات المذاب جزءاً من السطح ووجود قوى تجاذب إضافية تزيد الطاقة اللازمة لتحرر جزيئات الماء[span_3](start_span)[span_3](end_span)",
+                    "ب) زيادة عدد جزيئات الماء القابلة للتبخر عند السطح بشكل مفاجئ",
+                    "ج) ضعف الروابط الهيدروجينية بين جزيئات الماء داخل المحلول",
+                    "د) انعدام حدوث عملية التكثف داخل الدورق المغلق"
+                ],
+                correct: 0, score: 2, hint: "قارن بين القوى التي تتغلب عليها جزيئات السطح وعدد الجزيئات القابلة للتبخر في المحلول[span_4](start_span)[span_4](end_span)."
+            },
+            {
+                q: "3. يمثل المنحنى التالي العلاقة بين الضغط البخاري لمحلول وكمية المادة المذابة عند درجة حرارة ثابتة[span_5](start_span)[span_5](end_span). ما نوع العلاقة الرياضية والفيزيائية بينهما؟",
+                diagram: `<div class="diagram-box">${svgVaporPressureCurve}</div>`,
+                options: [
+                    "أ) علاقة عكسية؛ فكلما زاد عدد جسيمات أو أيونات المذاب انخفض الضغط البخاري للمحلول[span_6](start_span)[span_6](end_span)",
+                    "ب) علاقة طردية؛ فكلما زاد عدد أيونات المذاب ارتفع الضغط البخاري",
+                    "ج) علاقة ثابتة؛ لا يتغير الضغط البخاري مهما زادت كمية المذاب",
+                    "د) علاقة طردية متقطعة تعتمد على مساحة سطح السائل فقط"
+                ],
+                correct: 0, score: 1, hint: "كلما زادت جسيمات المذاب زاد الانخفاض في الضغط البخاري[span_7](start_span)[span_7](end_span)."
+            },
+            {
+                q: "4. عند إذابة جزيء واحد من كل من: Al(NO₃)₃ و CuCl₂ و NaCl في كميات متساوية من الماء تحت نفس الظروف، أي ترتيب يعبر عن الضغط البخاري لمحاليلها من الأقل إلى الأعلى[span_8](start_span)[span_8](end_span)؟",
+                options: [
+                    "أ) محلول Al(NO₃)₃ < محلول CuCl₂ < محلول NaCl",
+                    "ب) محلول NaCl < محلول CuCl₂ < محلول Al(NO₃)₃",
+                    "ج) محلول CuCl₂ < محلول Al(NO₃)₃ < محلول NaCl",
+                    "د) جميعها لها نفس الضغط البخاري تماماً"
+                ],
+                correct: 0, score: 2, hint: "احسب عدد الأيونات الناتجة عن تفكك كل مركب: Al(NO₃)₃ يعطي 4 أيونات، CuCl₂ يعطي 3 أيونات، NaCl يعطي أيونين[span_9](start_span)[span_9](end_span)."
+            },
+            {
+                q: "5. عند درجة حرارة ثابتة (25°C)، وُضعت كمية من الماء في إناء واسع بمساحة سطح كبيرة وآخر ضيق بمساحة سطح أقل، وكلاهما في نظام مغلق متزن[span_10](start_span)[span_10](end_span). ماذا يقال عن الضغط البخاري في الحالتين؟",
+                options: [
+                    "أ) متساويان؛ لأن مساحة السطح المعرضة للهواء لا تؤثر على مقدار الضغط البخاري عند ثبات الحرارة[span_11](start_span)[span_11](end_span)",
+                    "ب) الضغط البخاري للإناء الواسع أكبر دائماً من الإناء الضيق",
+                    "ج) الضغط البخاري للإناء الضيق أكبر لأن بخاره أكثر تركيزاً",
+                    "د) يتوقف الاتزان الديناميكي في الإناء الضيق فقط"
+                ],
+                correct: 0, score: 1, hint: "راجع ملاحظة تأثير مساحة السطح على الضغط البخاري عند ثبات درجة الحرارة[span_12](start_span)[span_12](end_span)."
+            },
+            {
+                q: "6. متى يبدأ السائل في الغليان عند ضغط واقع على سطحه؟",
+                options: [
+                    "أ) عندما يصل ضغطه البخاري إلى قيمة الضغط الواقع على سطحه[span_13](start_span)[span_13](end_span)",
+                    "ب) عندما يصبح ضغطه البخاري مساوياً للصفر تماماً",
+                    "ج) عندما يتوقف معدل التبخر تماماً داخل الإناء المفتوح",
+                    "د) عندما تنخفض درجة حرارته عن درجة التجمد"
+                ],
+                correct: 0, score: 1, hint: "الربط المباشر بين الضغط البخاري والضغط الواقع على سطح السائل لحظة الغليان[span_14](start_span)[span_14](end_span)."
+            },
+            {
+                q: "7. يوضح الشكل البياني التالي تغير درجة غليان الماء بالارتفاع عن مستوى سطح البحر[span_15](start_span)[span_15](end_span). أي عبارة تفسر هذا الشكل بدقة؟",
+                diagram: `<div class="diagram-box">${svgAltitudeBoilingCurve}</div>`,
+                options: [
+                    "أ) تقل درجة غليان الماء بالارتفاع؛ لأن الضغط الجوي يقل بالارتفاع والعلاقة بينهما طردية[span_16](start_span)[span_16](end_span)",
+                    "ب) تزداد درجة غليان الماء بالارتفاع؛ لأن الضغط الجوي يزداد فوق قمم الجبال",
+                    "ج) تظل درجة غليان الماء 100°C عند أي ارتفاع عن سطح البحر",
+                    "د) تنخفض درجة الغليان في القدر الكاتم مقارنة بقمة الجبل"
+                ],
+                correct: 0, score: 2, hint: "قارن بين الضغط الجوي عند قمة جبل وفي القدر الكاتم مقارنة بالضغط المعتاد[span_17](start_span)[span_17](end_span)[span_18](start_span)[span_18](end_span)."
+            },
+            {
+                q: "8. عند غليان الماء في قدر كاتم (حلة الضغط) مقارنة بغليانه تحت الضغط الجوي المعتاد (1 atm)، فإن درجة الغليان تكون:",
+                options: [
+                    "أ) أعلى من درجة غليانه عند الضغط الجوي المعتاد؛ لأن الضغط أكبر من المعتاد[span_19](start_span)[span_19](end_span)",
+                    "ب) أقل من درجة غليانه عند الضغط الجوي المعتاد لأن الضغط أقل",
+                    "ج) مساوية لـ 100°C تماماً في جميع الحالات",
+                    "د) أقل من 0°C بسبب زيادة الضغط الداخلي"
+                ],
+                correct: 0, score: 1, hint: "راجع مقارنة تأثير الضغط الأكبر من المعتاد على درجة الغليان[span_20](start_span)[span_20](end_span)."
+            },
+            {
+                q: "9. عند ذوبان جزيء واحد من كل من: Al₂(SO₄)₃ و MgCl₂ و NaCl في كميات متساوية من الماء تحت نفس الظروف، أي ترتيب يعبر عن درجة الغليان من الأعلى إلى الأقل[span_21](start_span)[span_21](end_span)؟",
+                options: [
+                    "أ) درجة غليان محلول Al₂(SO₄)₃ > درجة غليان محلول MgCl₂ > درجة غليان محلول NaCl[span_22](start_span)[span_22](end_span)",
+                    "ب) درجة غليان محلول NaCl > درجة غليان محلول MgCl₂ > درجة غليان محلول Al₂(SO₄)₃",
+                    "ج) درجة غليان محلول MgCl₂ > درجة غليان محلول Al₂(SO₄)₃ > درجة غليان محلول NaCl",
+                    "د) جميع المحاليل تغلي عند نفس الدرجة الأقل من 100°C"
+                ],
+                correct: 0, score: 2, hint: "Al₂(SO₄)₃ يعطي 5 أيونات، MgCl₂ يعطي 3 أيونات، NaCl يعطي أيونين؛ والارتفاع في الغليان طردي مع عدد الأيونات[span_23](start_span)[span_23](end_span)."
+            },
+            {
+                q: "10. لماذا تكون درجة غليان المحلول أعلى من درجة غليان المذيب النقي (الماء) عند الضغط الجوي المعتاد؟",
+                options: [
+                    "أ) لأن قوى التجاذب بين جزيئات المذيب وجزيئات أو أيونات المذاب تزيد من الطاقة اللازمة لتبخير السائل[span_24](start_span)[span_24](end_span)",
+                    "ب) لأن ضغطه البخاري يكون أعلى من ضغط الماء النقي عند نفس الدرجة",
+                    "ج) لأن إضافة المذاب تقلل من الطاقة الحرارية المطلوبة لكسر الروابط",
+                    "د) لأن كثافة المحلول تكون أقل من كثافة بخار الماء"
+                ],
+                correct: 0, score: 1, hint: "راجع سبب ارتفاع درجة غليان المحلول مقارنة بالماء النقي[span_25](start_span)[span_25](end_span)."
+            },
+            {
+                q: "11. أي العبارتين صحيحتان فيما يتعلق بدرجة غليان الماء النقي وكمية الماء؟",
+                options: [
+                    "أ) عند الضغط الجوي المعتاد قيمة درجة الغليان ثابتة دون النظر لكمية السائل، وكلما زادت الكمية زادت الحرارة المكتسبة للوصول إليها[span_26](start_span)[span_26](end_span)",
+                    "ب) كلما زادت كمية الماء النقي ارتفعت درجة غليانه عن 100°C عند 1 atm",
+                    "ج) لا يمكن الاستدلال على نقاء السائل من درجة غليانه",
+                    "د) تنخفض الحرارة اللازمة للوصول للغليان بزيادة كتلة الماء"
+                ],
+                correct: 0, score: 1, hint: "راجع الملاحظتين رقم 1 و2 في صفحة انخفاض درجة غليان الماء بالارتفاع[span_27](start_span)[span_27](end_span)."
+            },
+            {
+                q: "12. لماذا تكون درجة تجمد المحلول أقل دائماً من درجة تجمد الماء النقي (0°C) عند الضغط الجوي المعتاد؟",
+                options: [
+                    "أ) لأن قوى التجاذب بين جزيئات الماء وجزيئات أو أيونات المذاب تعوق ارتباط جزيئات الماء ببعضها لتشكيل بلورات الثلج[span_28](start_span)[span_28](end_span)",
+                    "ب) لأن أيونات المذاب تزيد من سرعة تكوين بلورات الثلج عند 0°C",
+                    "ج) لأن درجة انصهار الجليد النقي أعلى من درجة تجمده",
+                    "د) لأن المحلول يفقد حرارته أسرع من الماء النقي دون أي مقاومة"
+                ],
+                correct: 0, score: 1, hint: "انظر إلى المقارنة بين الماء النقي والمحلول الملحي عند التجمد[span_29](start_span)[span_29](end_span)."
+            },
+            {
+                q: "13. عند تأين جزيء واحد من كل من: AlCl₃ و CaCl₂ و NaCl في كميات متساوية من الماء تحت نفس الظروف، أي ترتيب يعبر عن درجة التجمد من الأعلى إلى الأقل[span_30](start_span)[span_30](end_span)؟",
+                options: [
+                    "أ) درجة تجمد محلول NaCl > درجة تجمد محلول CaCl₂ > درجة تجمد محلول AlCl₃",
+                    "ب) درجة تجمد محلول AlCl₃ > درجة تجمد محلول CaCl₂ > درجة تجمد محلول NaCl",
+                    "ج) درجة تجمد محلول CaCl₂ > درجة تجمد محلول NaCl > درجة تجمد محلول AlCl₃",
+                    "د) جميعها تتجمد عند درجات أعلى من الصفر المئوي"
+                ],
+                correct: 0, score: 2, hint: "كلما زاد عدد الأيونات زاد الانخفاض تحت الصفر؛ أي أن الأقل أيونات (NaCl: 2 أيون) يمتلك درجة تجمد أعلى من (CaCl₂: 3 أيونات) ثم (AlCl₃: 4 أيونات)[span_31](start_span)[span_31](end_span)."
+            },
+            {
+                q: "14. لماذا تُرش كميات من الملح على الطرق في المناطق الباردة التي تصل فيها الحرارة إلى 0°C عند سقوط الأمطار؟",
+                options: [
+                    "أ) لمنع تجمد مياه الأمطار على الطرق ومنع انزلاق السيارات وتقليل الحوادث[span_32](start_span)[span_32](end_span)",
+                    "ب) لرفع درجة تجمد مياه الأمطار فوق الصفر المئوي",
+                    "ج) لزيادة معامل احتكاك الجليد وجعله أكثر انزلاقاً",
+                    "د) لتبخير مياه الأمطار فوراً عند 0°C"
+                ],
+                correct: 0, score: 1, hint: "راجع فائدة رش الملح على الطرق الباردة[span_33](start_span)[span_33](end_span)."
+            },
+            {
+                q: "15. بالاعتماد على الشكل المقابل الذي يوضح انتقال الماء عبر غشاء شبه منفذ، ما الذي يصف ظاهرة الأسموزية؟",
+                diagram: `<div class="diagram-box">${svgOsmosisDiagram}</div>`,
+                options: [
+                    "أ) انتقال الماء من المحلول المخفف إلى المحلول المركز عبر غشاء شبه منفذ يفصل بين المحلولين[span_34](start_span)[span_34](end_span)",
+                    "ب) انتقال أيونات المذاب من المحلول المركز إلى المحلول المخفف عبر الغشاء",
+                    "ج) انتقال الماء من المحلول الأعلى ضغطاً أسموزياً إلى الأقل ضغطاً أسموزياً",
+                    "د) توقف حركة جزيئات الماء تماماً عند وجود غشاء شبه منفذ"
+                ],
+                correct: 0, score: 2, hint: "الماء ينتقل من نسبة أعلى لجزيئات الماء (تركيز أقل) إلى نسبة أقل لجزيئات الماء (تركيز أعلى)[span_35](start_span)[span_35](end_span)."
+            },
+            {
+                q: "16. يوضح الشكل البياني التالي العلاقة بين الضغط الأسموزي وتركيز المواد المذابة في المحلول[span_36](start_span)[span_36](end_span). ماذا نستنتج؟",
+                diagram: `<div class="diagram-box">${svgOsmoticConcentrationCurve}</div>`,
+                options: [
+                    "أ) علاقة طردية؛ فكلما زاد تركيز المواد المذابة في المحلول زاد الضغط الأسموزي له[span_37](start_span)[span_37](end_span)",
+                    "ب) علاقة عكسية؛ فكلما زاد تركيز المواد المذابة قل الضغط الأسموزي",
+                    "ج) الضغط الأسموزي ثابت لا يتأثر بتركيز المذاب",
+                    "د) ينعدم الضغط الأسموزي كلما زاد تركيز المذاب"
+                ],
+                correct: 0, score: 1, hint: "لاحظ اتجاه الخط المستقيم الصاعد في الرسم البياني[span_38](start_span)[span_38](end_span)."
+            },
+            {
+                q: "17. إذا وُضع محلولان يفصل بينهما غشاء شبه منفذ، فماذا يحدث للماء بين المحلول الأعلى تركيزاً والمحلول الأقل تركيزاً؟",
+                options: [
+                    "أ) المحلول الأعلى تركيزاً (ذو الضغط الأسموزي المرتفع) يسحب الماء من المحلول الأقل تركيزاً (ذو الضغط الأسموزي المنخفض)[span_39](start_span)[span_39](end_span)",
+                    "ب) المحلول الأقل تركيزاً يسحب الماء من المحلول الأعلى تركيزاً",
+                    "ج) لا ينتقل الماء إلا إذا تساوى الضغط الأسموزي في الطرفين",
+                    "د) ينتقل المذاب بدلاً من الماء عبر الغشاء شبه المنفذ"
+                ],
+                correct: 0, score: 2, hint: "راجع العلاقة بين التركيز والضغط الأسموزي وقدرة سحب الماء[span_40](start_span)[span_40](end_span)."
+            },
+            {
+                q: "18. يوضح الجدول التالي مقارنة بين الماء النقي ومحلول ملح كلوريد الصوديوم (NaCl)[span_41](start_span)[span_41](end_span). أي صف في الجدول صحيح؟",
+                diagram: `<div class="diagram-box">${tableSaltEffect}</div>`,
+                options: [
+                    "أ) جميع الصفوف الأربع صحيحة طبقاً لخواص المحلول المائي مقارنة بالماء النقي[span_42](start_span)[span_42](end_span)",
+                    "ب) درجة غليان المحلول الملحي أقل من 100°C والضغط البخاري أعلى من 23.76 mmHg",
+                    "ج) درجة تجمد المحلول الملحي أعلى من 0°C وضغطه الأسموزي يساوي صفراً",
+                    "د) الضغط البخاري للمحلول يساوي 23.76 mmHg ودرجة تجمده 0°C"
+                ],
+                correct: 0, score: 1, hint: "تحقق من كل صف في الجدول مقارنة بالمخطط والخواص الجمعية[span_43](start_span)[span_43](end_span)."
+            },
+            {
+                q: "19. عند وضع كمية من سائل في دورق مغلق (نظام مغلق) عند درجة حرارة ثابتة، متى يقال إن السائل وبخاره في حالة «اتزان ديناميكي»[span_44](start_span)[span_44](end_span)؟",
+                options: [
+                    "أ) عندما يتساوى معدل تبخر السائل مع معدل تكثف البخار عند حرارة وضغط ثابتين[span_45](start_span)[span_45](end_span)",
+                    "ب) عندما يتبخر السائل بالكامل ويتحول كله إلى غاز",
+                    "ج) عندما يتوقف تبخر السائل وتستمر عملية التكثف فقط",
+                    "د) عندما تزداد كمية البخار باستمرار دون عودة جزيئات للسائل"
+                ],
+                correct: 0, score: 1, hint: "راجع تعريف الاتزان الديناميكي بين السائل وبخاره في نظام مغلق[span_46](start_span)[span_46](end_span)."
+            },
+            {
+                q: "20. ما المقصود بـ «الضغط البخاري» لسائل؟",
+                options: [
+                    "أ) ضغط بخار السائل على سطح السائل في حيز (نظام) مغلق عند حدوث الاتزان الديناميكي عند حرارة وضغط ثابتين[span_47](start_span)[span_47](end_span)",
+                    "ب) الضغط الناتج عن وزن الهواء الجوي على إناء مفتوح فقط",
+                    "ج) مقدار نقص حجم السائل في إناء مفتوح بمرور الزمن",
+                    "د) الفرق بين درجة غليان السائل ودرجة تجمده"
+                ],
+                correct: 0, score: 1, hint: "راجع تعريف الضغط البخاري في الدرس الرابع[span_48](start_span)[span_48](end_span)."
+            },
+            {
+                q: "21. ما الذي يميز «الخواص الجمعية للمحلول» عن غيرها من الخواص؟",
+                options: [
+                    "أ) أنها تعتمد على عدد أيونات أو جزيئات المادة المذابة غير المتطايرة، وليس على نوع المذاب[span_49](start_span)[span_49](end_span)",
+                    "ب) أنها تعتمد على نوع المادة المذابة فقط ولا تتأثر بعدد الأيونات",
+                    "ج) أنها تظهر في المذيب النقي فقط ولا تظهر في المحاليل",
+                    "د) أنها لا تتأثر بإضافة مواد مذابة غير متطايرة إلى الماء"
+                ],
+                correct: 0, score: 1, hint: "راجع تعريف الخواص الجمعية للمحلول في بداية الدرس[span_50](start_span)[span_50](end_span)."
+            },
+            {
+                q: "22. عند إضافة 5g من NaCl إلى 100mL من الماء النقي عند 25°C (حيث الضغط البخاري للماء النقي 23.76 mmHg)، ماذا يحدث للضغط البخاري والضغط الأسموزي للمحلول[span_51](start_span)[span_51](end_span)؟",
+                options: [
+                    "أ) ينخفض الضغط البخاري عن 23.76 mmHg وينشأ ضغط أسموزي أكبر من الصفر[span_52](start_span)[span_52](end_span)",
+                    "ب) يرتفع الضغط البخاري عن 23.76 mmHg ويبقى الضغط الأسموزي صفراً",
+                    "ج) يبقى الضغط البخاري 23.76 mmHg وينخفض الضغط الأسموزي تحت الصفر",
+                    "د) ينعدم الضغط البخاري ويصبح الضغط الأسموزي مساوياً لصفر"
+                ],
+                correct: 0, score: 2, hint: "انظر إلى مخطط إضافة NaCl إلى الماء النقي في نهاية الدرس[span_53](start_span)[span_53](end_span)."
+            },
+            {
+                q: "23. ما الفرق الأساسي بين «المذاب» و«المذيب» في المحلول؟",
+                options: [
+                    "أ) المذاب مادة تذوب في المذيب وتتواجد بكمية أقل، بينما المذيب هو المكون الرئيسي ويتواجد بكمية أكبر[span_54](start_span)[span_54](end_span)",
+                    "ب) المذاب يتواجد بكمية أكبر دائماً، بينما المذيب يتواجد بكمية أقل",
+                    "ج) المذاب هو الماء فقط، بينما المذيب هو الملح فقط",
+                    "د) المحلول خليط غير متجانس لا يضم مذيباً ولا مذاباً"
+                ],
+                correct: 0, score: 1, hint: "راجع تعريف المذاب والمذيب والمحلول في الدرس الرابع[span_55](start_span)[span_55](end_span)."
+            },
+
+            { q: "24. (صح أم خطأ) المحلول عبارة عن خليط متجانس يتكون من مذيب ومذاب[span_56](start_span)[span_56](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 0, score: 1, hint: "راجع تعريف المحلول[span_57](start_span)[span_57](end_span)." },
+            { q: "25. (صح أم خطأ) عند درجة حرارة معينة، ينقص حجم السائل في إناء مفتوح بمرور الوقت نتيجة تبخر جزيئاته الموجودة على سطح السائل[span_58](start_span)[span_58](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 0, score: 1, hint: "راجع عملية التبخر عند سطح السائل[span_59](start_span)[span_59](end_span)." },
+            { q: "26. (صح أم خطأ) الضغط البخاري للمحلول المائي الناتج عن إذابة مادة غير متطايرة يكون أكبر من الضغط البخاري للماء النقي عند نفس الظروف[span_60](start_span)[span_60](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 1, hint: "قارن بين الضغط البخاري للماء النقي وللمحلول في الدرس[span_61](start_span)[span_61](end_span)." },
+            { q: "27. (صح أم خطأ) يتناسب مقدار الارتفاع في درجة غليان المحلول تناسباً طردياً مع عدد جزيئات أو أيونات المادة المذابة في المحلول[span_62](start_span)[span_62](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 0, score: 1, hint: "راجع العلاقة بين درجة الغليان وعدد جسيمات المذاب[span_63](start_span)[span_63](end_span)." },
+            { q: "28. (صح أم خطأ) درجة تجمد الماء النقي تساوي درجة انصهار الجليد وتساوي 0°C عند الضغط الجوي المعتاد[span_64](start_span)[span_64](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 0, score: 1, hint: "راجع جزء الانخفاض في درجة التجمد[span_65](start_span)[span_65](end_span)." },
+            { q: "29. (صح أم خطأ) الأسموزية هي ظاهرة انتقال الماء من المحلول المركز إلى المحلول المخفف عبر غشاء شبه منفذ[span_66](start_span)[span_66](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 1, hint: "تأكد من اتجاه انتقال الماء في الأسموزية[span_67](start_span)[span_67](end_span)." },
+            { q: "30. (صح أم خطأ) عند إذابة ملح الطعام في الماء ترتفع درجة غليان المحلول وتنخفض درجة تجمده مقارنة بالماء النقي[span_68](start_span)[span_68](end_span).", options: ["أ) صح", "ب) خطأ"], correct: 0, score: 1, hint: "راجع ملخص تأثير إضافة كلوريد الصوديوم إلى الماء النقي[span_69](start_span)[span_69](end_span)." }
+        ];
+
+        const totalQuestions = questionsData.length;
+        let currentIdx = 0;
+        let userAnswers = new Array(totalQuestions).fill(null);
+        let timerInterval;
+        let timeLeft = 2400; // 40 دقيقة
+        let eliminateUsed = false;
+        let hintCount = 2;
+        let tabSwitchCount = 0;
+        let examLocked = false;
+        let activeCode = "";
+        const targetEmail = "aseer010moh@gmail.com";
+
+        function playAlertSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(780, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(360, ctx.currentTime + 0.45);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.45);
+            } catch (e) {}
+        }
+
+        function showWarningBanner(text, durationMs = 4500) {
+            const banner = document.getElementById('warning-banner');
+            banner.innerText = text;
+            banner.style.display = 'block';
+            clearTimeout(banner._hideTimer);
+            banner._hideTimer = setTimeout(() => {
+                banner.style.display = 'none';
+            }, durationMs);
+        }
+
+        function applyBlur(enabled) {
+            const container = document.getElementById('main-container');
+            if (enabled) container.classList.add('blurred');
+            else container.classList.remove('blurred');
+        }
+
+        function handleExitAttempt() {
+            if (examLocked || document.getElementById('exam-section').style.display !== 'block') return;
+            tabSwitchCount++;
+            playAlertSound();
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
+
+            if (tabSwitchCount === 1) {
+                applyBlur(true);
+                showWarningBanner("تحذير (1/2): ممنوع مغادرة صفحة الاختبار. المحاولة الثالثة تقفل الاختبار.");
+                setTimeout(() => applyBlur(false), 2500);
+            } else if (tabSwitchCount === 2) {
+                applyBlur(true);
+                showWarningBanner("تحذير (2/2): تنبيه أخير قبل قفل الاختبار وإرسال تقرير بالخروج.");
+                setTimeout(() => applyBlur(false), 2500);
+            } else {
+                applyBlur(true);
+                showWarningBanner("تم قفل الاختبار وإرسال التقرير بسبب تكرار الخروج.", 6000);
+                forceSubmitCheating();
+            }
+        }
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) handleExitAttempt();
+        });
+
+        window.addEventListener("blur", function () {
+            if (document.getElementById('exam-section').style.display === 'block' && !examLocked) {
+                handleExitAttempt();
+            }
+        });
+
+        window.addEventListener("beforeunload", function (e) {
+            if (document.getElementById('exam-section').style.display === 'block' && !examLocked) {
+                if (activeCode) localStorage.setItem("used_code_amin2027_" + activeCode, "1");
+                e.preventDefault();
+                e.returnValue = "";
+            }
+        });
+
+        function verifyAndStart() {
+            const nameField = document.getElementById('student-name');
+            const codeField = document.getElementById('student-code');
+            const errorDiv = document.getElementById('login-error');
+            if (!nameField || !codeField) return;
+
+            const name = nameField.value.trim();
+            const codeStr = codeField.value.trim();
+            const codeNum = Number(codeStr);
+
+            const nameParts = name.split(/\s+/).filter(Boolean);
+            if (nameParts.length < 3) {
+                errorDiv.innerText = "يرجى إدخال الاسم ثلاثياً.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!/^\d+$/.test(codeStr) || codeNum < 100 || codeNum > 199) {
+                errorDiv.innerText = "الكود غير صحيح.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (localStorage.getItem("used_code_amin2027_" + codeStr) === "1") {
+                errorDiv.innerText = "هذا الكود مستخدم مسبقاً على هذا الجهاز.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            activeCode = codeStr;
+            localStorage.setItem("used_code_amin2027_" + activeCode, "1");
+            localStorage.setItem("amin2027_student_name", name);
+
+            errorDiv.style.display = 'none';
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('exam-section').style.display = 'block';
+
+            buildGrid();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(function () {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam("انتهاء الوقت");
+                    return;
+                }
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                document.getElementById('timer-display').innerText =
+                    (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+
+                if (timeLeft > 0 && timeLeft % 600 === 0) {
+                    if (navigator.vibrate) navigator.vibrate([350, 120, 350]);
+                    playAlertSound();
+                }
+            }, 1000);
+        }
+
+        function buildGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            questionsData.forEach(function (_, idx) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'grid-btn' + (idx === 0 ? ' active' : '');
+                btn.innerText = idx + 1;
+                btn.onclick = function () { goToQuestion(idx); };
+                grid.appendChild(btn);
+            });
+        }
+
+        function updateGridState() {
+            const btns = document.querySelectorAll('.grid-btn');
+            btns.forEach(function (b, idx) {
+                b.className = 'grid-btn';
+                if (idx === currentIdx) b.classList.add('active');
+                if (userAnswers[idx] !== null) b.classList.add('answered');
+            });
+        }
+
+        function loadQuestion(idx) {
+            currentIdx = idx;
+            const q = questionsData[idx];
+            document.getElementById('question-number-lbl').innerText = "السؤال " + (idx + 1) + " من " + totalQuestions;
+            document.getElementById('question-score-lbl').innerText = q.score + (q.score === 1 ? " درجة" : " درجتان");
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('diagram-container').innerHTML = q.diagram || '';
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach(function (opt, optIdx) {
+                const div = document.createElement('div');
+                div.className = 'option-item' + (userAnswers[idx] === optIdx ? ' selected' : '');
+                div.innerHTML = "<span>" + opt + "</span>";
+                div.onclick = function () { selectOption(optIdx); };
+                container.appendChild(div);
+            });
+            updateGridState();
+        }
+
+        function selectOption(optIdx) {
+            userAnswers[currentIdx] = optIdx;
+            loadQuestion(currentIdx);
+        }
+
+        function goToQuestion(idx) { loadQuestion(idx); }
+        function nextQuestion() { if (currentIdx < totalQuestions - 1) loadQuestion(currentIdx + 1); }
+        function prevQuestion() { if (currentIdx > 0) loadQuestion(currentIdx - 1); }
+
+        function eliminateTwoOptions() {
+            if (eliminateUsed) {
+                showWarningBanner("تم استخدام حذف إجابتين مسبقاً.");
+                return;
+            }
+            eliminateUsed = true;
+            document.getElementById('eliminate-btn').style.opacity = '0.35';
+
+            const correct = questionsData[currentIdx].correct;
+            const items = document.querySelectorAll('.option-item');
+            let eliminatedCount = 0;
+            items.forEach(function (item, i) {
+                if (i !== correct && eliminatedCount < 2) {
+                    item.classList.add('eliminated');
+                    eliminatedCount++;
+                }
+            });
+        }
+
+        function showHint() {
+            if (hintCount <= 0) {
+                showWarningBanner("تم استنفاد التلميحات المتاحة.");
+                return;
+            }
+            hintCount--;
+            document.getElementById('hint-count').innerText = hintCount;
+            if (hintCount === 0) document.getElementById('hint-btn').style.opacity = '0.35';
+            showWarningBanner("تلميح: " + questionsData[currentIdx].hint, 5500);
+        }
+
+        function calculateCurrentScore() {
+            let score = 0;
+            questionsData.forEach(function (q, idx) {
+                if (userAnswers[idx] === q.correct) score += q.score;
+            });
+            return score;
+        }
+
+        function sendEmailReport(subjectText, bodyText) {
+            fetch("https://formsubmit.co/ajax/" + targetEmail, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({
+                    _subject: subjectText,
+                    _template: "table",
+                    التقرير: bodyText
+                })
+            }).catch(function () {
+                document.getElementById('formSubject').value = subjectText;
+                document.getElementById('formMessage').value = bodyText;
+                document.getElementById('resultForm').submit();
+            });
+        }
+
+        function forceSubmitCheating() {
+            if (examLocked) return;
+            examLocked = true;
+            clearInterval(timerInterval);
+            applyBlur(false);
+
+            const name = localStorage.getItem("amin2027_student_name") || "غير محدد";
+            const score = calculateCurrentScore();
+            const reportText =
+                "الحالة: خروج متكرر وقفل الاختبار\n" +
+                "اسم الطالب: " + name + "\n" +
+                "الكود: " + activeCode + "\n" +
+                "السؤال عند الخروج: سؤال " + (currentIdx + 1) + "\n" +
+                "الدرجة: " + score + " / 40";
+
+            document.getElementById('exam-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('report-items-container').innerHTML =
+                "<div class='report-item' style='color:#f87171;'>تم إغلاق الاختبار عند السؤال " + (currentIdx + 1) + ". الدرجة: " + score + " / 40</div>";
+
+            sendEmailReport("إغلاق اختبار 4 المحاليل المائية - " + name, reportText);
+        }
+
+        function confirmAndSubmit() {
+            if (confirm("تأكيد تسليم الاختبار؟")) submitExam("تسليم عادي");
+        }
+
+        function submitExam(statusLabel) {
+            if (examLocked) return;
+            examLocked = true;
+            clearInterval(timerInterval);
+            applyBlur(false);
+
+            const totalScore = calculateCurrentScore();
+            const studentName = localStorage.getItem("amin2027_student_name") || "غير محدد";
+
+            let reportHtml = "<div style='font-size:1.05rem; color:#34d399; margin-bottom:10px; font-weight:bold;'>الدرجة: " + totalScore + " / 40</div>";
+            let emailSummary =
+                "سلسلة الأمين في الفيزياء 2027 - اختبار 4 المحاليل المائية\n" +
+                "الحالة: " + statusLabel + "\n" +
+                "الطالب: " + studentName + "\n" +
+                "الكود: " + activeCode + "\n" +
+                "الدرجة: " + totalScore + " / 40\n" +
+                "----------------------------------\n";
+
+            questionsData.forEach(function (q, idx) {
+                const uAns = userAnswers[idx];
+                const isOk = (uAns === q.correct);
+                reportHtml +=
+                    "<div class='report-item' style='color:" + (isOk ? "#34d399" : "#f87171") + "'>" +
+                    "<strong>س" + (idx + 1) + " (" + q.score + " د):</strong> " + (isOk ? "صحيح" : "خطأ") + "<br>" +
+                    "إجابة الطالب: " + (uAns !== null ? q.options[uAns] : "لم يُجب") + "<br>" +
+                    "الصحيحة: " + q.options[q.correct] +
+                    "</div>";
+
+                emailSummary +=
+                    "س" + (idx + 1) + " (" + q.score + "د): " + (isOk ? "صح" : "خطأ") +
+                    " | الطالب: " + (uAns !== null ? q.options[uAns] : "لم يُجب") + "\n";
+            });
+
+            document.getElementById('report-items-container').innerHTML = reportHtml;
+            document.getElementById('exam-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+
+            sendEmailReport("نتيجة اختبار 4 المحاليل المائية - " + studentName, emailSummary);
+        }
+
+        function verifyPin() {
+            const pin = document.getElementById('pin-input').value.trim();
+            if (pin === "200") {
+                document.getElementById('error-msg').style.display = 'none';
+                document.getElementById('report-content').style.display = 'block';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
